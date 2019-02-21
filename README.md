@@ -1,2 +1,1 @@
-# blog
-hexo blog code
+# neusnail.github.io
