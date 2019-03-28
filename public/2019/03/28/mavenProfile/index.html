@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="maven,spring,">
 
 
 
@@ -79,17 +79,18 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="description" content="在maven的pom文件中可以设置profile标签.在旧版的springMVC中可以通过这种方式结合filter和resource标签指定当前加载的配置文件. 在springboot中没必要这么麻烦 因为springboot会根据当前激活的profile自动加载application-{profile}.properties配置文件. 注意这里maven中的profile和spring中的pro">
+<meta name="keywords" content="maven,spring">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2019/03/11/hello-world/index.html">
+<meta property="og:title" content="通过maven profile配置运行环境以及@...@占位符使用">
+<meta property="og:url" content="http://yoursite.com/2019/03/28/mavenProfile/index.html">
 <meta property="og:site_name" content="neuSnail&#39;s blog">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="在maven的pom文件中可以设置profile标签.在旧版的springMVC中可以通过这种方式结合filter和resource标签指定当前加载的配置文件. 在springboot中没必要这么麻烦 因为springboot会根据当前激活的profile自动加载application-{profile}.properties配置文件. 注意这里maven中的profile和spring中的pro">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-11T10:16:42.790Z">
+<meta property="og:updated_time" content="2019-03-28T06:43:46.262Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="通过maven profile配置运行环境以及@...@占位符使用">
+<meta name="twitter:description" content="在maven的pom文件中可以设置profile标签.在旧版的springMVC中可以通过这种方式结合filter和resource标签指定当前加载的配置文件. 在springboot中没必要这么麻烦 因为springboot会根据当前激活的profile自动加载application-{profile}.properties配置文件. 注意这里maven中的profile和spring中的pro">
 
 
 
@@ -119,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/03/11/hello-world/">
+  <link rel="canonical" href="http://yoursite.com/2019/03/28/mavenProfile/">
 
 
 
 
 
-  <title>Hello World | neuSnail's blog</title>
+  <title>通过maven profile配置运行环境以及@...@占位符使用 | neuSnail's blog</title>
   
 
 
@@ -262,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/11/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/mavenProfile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="neuSnail">
@@ -279,7 +280,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Hello World</h2>
+          <h2 class="post-title" itemprop="name headline">通过maven profile配置运行环境以及@...@占位符使用</h2>
         
 
         <div class="post-meta">
@@ -291,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-11T18:16:42+08:00">
-                2019-03-11
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-28T13:19:48+08:00">
+                2019-03-28
               </time>
             
 
@@ -329,16 +330,20 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
+        <p>在maven的pom文件中可以设置profile标签.在旧版的springMVC中可以通过这种方式结合filter和resource标签指定当前加载的配置文件.</p>
+<p>在springboot中没必要这么麻烦 因为springboot会根据当前激活的profile自动加载application-{profile}.properties配置文件.</p>
+<p><strong>注意这里maven中的profile和spring中的profile(spring.profiles.active)完全不是一个东西,maven的profile是只在编译(build)时生效的,而spring的profile是在运行时(runtime)使用的</strong></p>
+<p>所以现在的目的就是通过maven的profile指定spring的profile.这一步可以通过占位符(delimiter)来实现. 如果你使用的是spring-boot-starter-parent可以直接按如下配置:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 本地开发环境 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>dev<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">env</span>&gt;</span>dev<span class="tag">&lt;/<span class="name">env</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">activation</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 设置默认激活这个配置 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 测试环境 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>test<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">env</span>&gt;</span>test<span class="tag">&lt;/<span class="name">env</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>之后在application.properties中加上一行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.profiles.active=@env@</span><br></pre></td></tr></table></figure></p>
+<p>在pom中我们为不同的profile配置了一个<code>env</code>属性,该属性可以在application.properties中通过占位符@...@来引用<br>在使用时我一直好奇这个@占位符是在哪定义的,后来在spring官方文档中终于查到是在spring-boot-starter-parent中定义的,这个文件在IDEA中可以直接点进去编辑,或者直接在下面的路径中找到打开编辑</p>
+<p>.m2/repository/org/springframework/boot/spring-boot-starter-parent/2.1.0.RELEASE/spring-boot-starter-parent-2.1.0.RELEASE.pom</p>
+<p><em>(当然在实际使用时不应该直接编辑这个 parent而应该在自己的pom中重写属性)</em></p>
+<p>在properties标签中可以找到该分隔符的定义<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resource.delimiter</span>&gt;</span>@<span class="tag">&lt;/<span class="name">resource.delimiter</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>这里可以修改这个配置改成我们想用的分割符比如<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resource.delimiter</span>&gt;</span>^<span class="tag">&lt;/<span class="name">resource.delimiter</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>之后在配置文件中就可以这样使用了<code>spring.profiles.active=^env^</code></p>
+<p>如果想使用spring之前默认的占位符${…} 可以把这行注释掉,之后修改useDefaultDelimiters为true</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">delimiters</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">delimiter</span>&gt;</span>$&#123;resource.delimiter&#125;<span class="tag">&lt;/<span class="name">delimiter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">delimiters</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">useDefaultDelimiters</span>&gt;</span>true<span class="tag">&lt;/<span class="name">useDefaultDelimiters</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -353,6 +358,14 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/maven/" rel="tag"># maven</a>
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+        </div>
+      
 
       
       
@@ -362,8 +375,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/17/java函数调用按值传递/" rel="next" title="java函数调用按值传递">
-                <i class="fa fa-chevron-left"></i> java函数调用按值传递
+              <a href="/2019/03/27/常用的httpCode/" rel="next" title="常用的http code">
+                <i class="fa fa-chevron-left"></i> 常用的http code
               </a>
             
           </div>
@@ -371,10 +384,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/03/27/常用的httpCode/" rel="prev" title="常用的http code">
-                常用的http code <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -426,17 +435,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -498,22 +498,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
