@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,tools,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.openjdk.jol&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;jol-core&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;0.9&amp;lt;/">
+<meta name="keywords" content="java,tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JOL查看对象内存结构">
+<meta property="og:url" content="http://yoursite.com/2019/04/04/jol/index.html">
+<meta property="og:site_name" content="neuSnail&#39;s blog">
+<meta property="og:description" content="jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.openjdk.jol&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;jol-core&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;0.9&amp;lt;/">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif">
+<meta property="og:updated_time" content="2019-04-05T07:04:10.493Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JOL查看对象内存结构">
+<meta name="twitter:description" content="jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.openjdk.jol&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;jol-core&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;0.9&amp;lt;/">
+<meta name="twitter:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/04/jol/">
+
+
+
+
+
+  <title>JOL查看对象内存结构 | neuSnail's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">neuSnail's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">how you find this?</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/04/jol/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="neuSnail">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="neuSnail's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">JOL查看对象内存结构</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-04T22:26:47+08:00">
+                2019-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jol<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jol-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>测试类代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectHeadTest</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> intValue = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">            ObjectHeadTest object = <span class="keyword">new</span> ObjectHeadTest();</span><br><span class="line">            <span class="comment">//打印hashcode</span></span><br><span class="line">            System.out.println(object.hashCode());</span><br><span class="line">            <span class="comment">//查看字节序</span></span><br><span class="line">            System.out.println(ByteOrder.nativeOrder());</span><br><span class="line"></span><br><span class="line">            <span class="comment">//打印当前jvm信息</span></span><br><span class="line">            System.out.println(VM.current().details());</span><br><span class="line">            String classLayout = ClassLayout.parseInstance(object).toPrintable();</span><br><span class="line">            System.out.println(classLayout);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码直接执行得到如下结果：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">2034688500</span><br><span class="line">LITTLE_ENDIAN</span><br><span class="line"><span class="comment"># Running 64-bit HotSpot VM.</span></span><br><span class="line"><span class="comment"># Using compressed oop with 3-bit shift.</span></span><br><span class="line"><span class="comment"># Using compressed klass with 0x0000000800000000 base address and 0-bit shift.</span></span><br><span class="line"><span class="comment"># Objects are 8 bytes aligned.</span></span><br><span class="line"><span class="comment"># Field sizes by type: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]</span></span><br><span class="line"><span class="comment"># Array element sizes: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]</span></span><br><span class="line"></span><br><span class="line">jdk_test.ObjectHeadTest object internals:</span><br><span class="line"> OFFSET  SIZE   TYPE DESCRIPTION                               VALUE</span><br><span class="line">      0     4        (object header)                           01 f4 e1 46 (00000001 11110100 11100001 01000110) (1189213185)</span><br><span class="line">      4     4        (object header)                           79 00 00 00 (01111001 00000000 00000000 00000000) (121)</span><br><span class="line">      8     4        (object header)                           40 70 06 00 (01000000 01110000 00000110 00000000) (421952)</span><br><span class="line">     12     4    int ObjectHeadTest.intValue                   0</span><br><span class="line">Instance size: 16 bytes</span><br><span class="line">Space losses: 0 bytes internal + 0 bytes external = 0 bytes total</span><br></pre></td></tr></table></figure></p>
+<p>可以看到ObjectHeadTest实例的header只有12个字节。而64位的jvm对象的header应该占16个字节128位。造成这种情况的原因是jvm默认开启了指针压缩,在64位vm上会把64位的对象指针压缩成32位(原因和细节这里暂不延伸 有兴趣可以自行搜索下) 。这就导致原本应该占8byte的klass对象指针只占了4byte。使用<code>-XX:-UseCompressedOops</code>参数可以关闭指针压缩。开启和关闭指针压缩的头部信息如下两张表所示：</p>
+<p>开启指针压缩：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-------------------------------------------------------------------------------------------------------------|--------------------|</span><br><span class="line">|                                            Object Header (96 bits)                                           |        State       |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                                  Mark Word (64 bits)                           |    Klass Word (32 bits)     |                    |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">| unused:25 | identity_hashcode:31 | cms_free:1 | age:4 | biased_lock:1 | lock:2 |    OOP to metadata object   |       Normal       |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">| thread:54 |       epoch:2        | cms_free:1 | age:4 | biased_lock:1 | lock:2 |    OOP to metadata object   |       Biased       |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                         ptr_to_lock_record                            | lock:2 |    OOP to metadata object   | Lightweight Locked |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                     ptr_to_heavyweight_monitor                        | lock:2 |    OOP to metadata object   | Heavyweight Locked |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                                                                       | lock:2 |    OOP to metadata object   |    Marked for GC   |</span><br><span class="line">|--------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br></pre></td></tr></table></figure>
+<p>关闭指针压缩<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">|------------------------------------------------------------------------------------------------------------|--------------------|</span><br><span class="line">|                                            Object Header (128 bits)                                        |        State       |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                                  Mark Word (64 bits)                         |    Klass Word (64 bits)     |                    |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">| unused:25 | identity_hashcode:31 | unused:1 | age:4 | biased_lock:1 | lock:2 |    OOP to metadata object   |       Normal       |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">| thread:54 |       epoch:2        | unused:1 | age:4 | biased_lock:1 | lock:2 |    OOP to metadata object   |       Biased       |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                       ptr_to_lock_record:62                         | lock:2 |    OOP to metadata object   | Lightweight Locked |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                     ptr_to_heavyweight_monitor:62                   | lock:2 |    OOP to metadata object   | Heavyweight Locked |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br><span class="line">|                                                                     | lock:2 |    OOP to metadata object   |    Marked for GC   |</span><br><span class="line">|------------------------------------------------------------------------------|-----------------------------|--------------------|</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Object Header form thanks for <a href="https://gist.github.com/arturmkrtchyan/43d6135e8a15798cc46c" target="_blank" rel="noopener">https://gist.github.com/arturmkrtchyan/43d6135e8a15798cc46c</a></p>
+</blockquote>
+<p>还有一个我现在都不太明白的踩坑点 在上面我调用了一遍object.hashCode()来查看hash码，如果不手动调用一遍instance的hashCode方法 classLayout打印出来的hashcode就是空的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">OFFSET  SIZE   TYPE DESCRIPTION                               VALUE</span><br><span class="line">     0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)</span><br><span class="line">     4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)</span><br><span class="line">     8     4        (object header)                           40 70 06 00 (01000000 01110000 00000110 00000000) (421952)</span><br><span class="line">    12     4    int ObjectHeadTest.intValue                   0</span><br><span class="line">    20     4        (loss due to the next object alignment)</span><br></pre></td></tr></table></figure></p>
+<p><code>System.out.println(ByteOrder.nativeOrder());</code> 可以查看当前cpu的字节序。输出是LITTLE_ENDIAN意味着是小端序。</p>
+<ul>
+<li><p>小端序：数据的高位字节存放在地址的高端 低位字节存放在地址低端</p>
+</li>
+<li><p>大端序： 数据的高位字节存放在地址的低端 低位字节存放在地址高端<br>比如一个整形0x1234567 ，1是高位数据，7是低位数据。按照小端序01放在内存地址的高位，比如放在0x100  ，23就放在0x101以此类推。大端序反之。<br><img src="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif" alt="字节序"><br>以为地址序是从低到高的所以大端序更符合人类的阅读习惯。而大部分intel和amd的cpu都是使用的小端序。关闭指针压缩的输出如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">jdk_test.ObjectHeadTest object internals:</span><br><span class="line"> OFFSET  SIZE   TYPE DESCRIPTION                               VALUE</span><br><span class="line">      0     4        (object header)                           09 f4 e1 46 (00001001 11110100 11100001 01000110) (1189213193)</span><br><span class="line">      4     4        (object header)                           79 00 00 00 (01111001 00000000 00000000 00000000) (121)</span><br><span class="line">      8     4        (object header)                           18 55 a0 ab (00011000 01010101 10100000 10101011) (-1415555816)</span><br><span class="line">     12     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)</span><br><span class="line">     16     4    int ObjectHeadTest.intValue                   0</span><br><span class="line">     20     4        (loss due to the next object alignment)</span><br><span class="line">Instance size: 24 bytes</span><br><span class="line">Space losses: 0 bytes internal + 4 bytes external = 4 bytes total</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>前8位是markword,后8位是Klass指针。先不管Klass指针，我们把markword转成大端序便于查看<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">markword with big endian</span></span><br><span class="line">00000000 00000000 00000000 01111001 01000110 11100001 11110100 00001001</span><br></pre></td></tr></table></figure></p>
+<p>前25位是未使用的，之后的31位是hashcode 001111001010001101110000111110100（第一个0为符号位）转成十进制即为2034688500和hashCode()方法的值一致<br>最后的8位00001001第一个0没使用 后面的001对应age,biased_lock和lock。这三个字段的详细说明如下：</p>
+<blockquote>
+<ul>
+<li>age - number of garbage collections the object has survived. It is incremented every time an object is copied within the young generation. When the age field reaches the value of max-tenuring-threshold, the object is promoted to the old generation.</li>
+<li>biased_lock - contains 1 if the biased locking is enabled for the class. 0 if the biased locking is disabled for the class. To find out more on biased locking check out my previous post.</li>
+<li>lock - the lock state of the object. 00 - Lightweight Locked, 01 - Unlocked or Biased, 10 - Heavyweight Locked, 11 - Marked for Garbage Collection. To find out more on locking/synchronization check out synchronization post. </li>
+</ul>
+</blockquote>
+<p>age是对象经历的gc次数，biased_lock代表是否使用偏向锁，lock是锁的状态这里001表示没有使用锁</p>
+<p>header占用12个字节，之后的4个字节是对象的int属性，之后又4个字节的对齐填充。</p>
+<p>由于HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，也就是说就是对象的大小必须是8字节的整数倍。如上header加上fileld是20字节，所以需要4字节的对齐填充。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/tools/" rel="tag"># tools</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/28/servlet/" rel="next" title="servlet">
+                <i class="fa fa-chevron-left"></i> servlet
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="neuSnail">
+            
+              <p class="site-author-name" itemprop="name">neuSnail</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">neuSnail</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
