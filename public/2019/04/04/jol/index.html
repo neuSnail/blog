@@ -88,7 +88,7 @@
 <meta property="og:description" content="jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.openjdk.jol&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;jol-core&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;0.9&amp;lt;/">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif">
-<meta property="og:updated_time" content="2019-04-05T07:04:10.493Z">
+<meta property="og:updated_time" content="2019-04-05T13:55:53.398Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JOL查看对象内存结构">
 <meta name="twitter:description" content="jol是一款查看java对象内存结构的工具,第一次使用时着实踩了不少坑。 jol的maven依赖如下：12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.openjdk.jol&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;jol-core&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;0.9&amp;lt;/">
@@ -369,7 +369,7 @@
 <ul>
 <li><p>小端序：数据的高位字节存放在地址的高端 低位字节存放在地址低端</p>
 </li>
-<li><p>大端序： 数据的高位字节存放在地址的低端 低位字节存放在地址高端<br>比如一个整形0x1234567 ，1是高位数据，7是低位数据。按照小端序01放在内存地址的高位，比如放在0x100  ，23就放在0x101以此类推。大端序反之。<br><img src="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif" alt="字节序"><br>以为地址序是从低到高的所以大端序更符合人类的阅读习惯。而大部分intel和amd的cpu都是使用的小端序。关闭指针压缩的输出如下:</p>
+<li><p>大端序： 数据的高位字节存放在地址的低端 低位字节存放在地址高端<br>比如一个整形0x1234567 ，1是高位数据，7是低位数据。按照小端序01放在内存地址的高位，比如放在0x100  ，23就放在0x101以此类推。大端序反之。<br><img src="https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif" alt="字节序"><br>因为堆的地址序是从低到高的所以大端序更符合人类的阅读习惯。而大部分intel和amd的cpu都是使用的小端序。关闭指针压缩的输出如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">jdk_test.ObjectHeadTest object internals:</span><br><span class="line"> OFFSET  SIZE   TYPE DESCRIPTION                               VALUE</span><br><span class="line">      0     4        (object header)                           09 f4 e1 46 (00001001 11110100 11100001 01000110) (1189213193)</span><br><span class="line">      4     4        (object header)                           79 00 00 00 (01111001 00000000 00000000 00000000) (121)</span><br><span class="line">      8     4        (object header)                           18 55 a0 ab (00011000 01010101 10100000 10101011) (-1415555816)</span><br><span class="line">     12     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)</span><br><span class="line">     16     4    int ObjectHeadTest.intValue                   0</span><br><span class="line">     20     4        (loss due to the next object alignment)</span><br><span class="line">Instance size: 24 bytes</span><br><span class="line">Space losses: 0 bytes internal + 4 bytes external = 4 bytes total</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
@@ -417,8 +417,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/28/servlet/" rel="next" title="servlet">
-                <i class="fa fa-chevron-left"></i> servlet
+              <a href="/2019/03/28/mavenProfile/" rel="next" title="通过maven profile配置运行环境以及@...@占位符使用">
+                <i class="fa fa-chevron-left"></i> 通过maven profile配置运行环境以及@...@占位符使用
               </a>
             
           </div>
@@ -426,6 +426,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/05/threadWait/" rel="prev" title="关于线程wait/notify">
+                关于线程wait/notify <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -495,7 +499,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -517,7 +521,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

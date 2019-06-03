@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="强引用(StrongReference)强引用是最常见的引用，下面例子中使用new关键字以及赋值操作创建出来的引用都是强引用1234//a 是ObjectA的强引用ObjectA a = new ObjectA();//b 是ObjectA的强引用ObjectA b = a; 强引用不会被垃圾回收器回收，当内存空间不足时，jvm宁愿抛出oom使进城终止也不会随意回收具有强引用的对象。把一个对象的引">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java引用类型与内存泄露">
+<meta property="og:url" content="http://yoursite.com/2019/04/13/java引用类型/index.html">
+<meta property="og:site_name" content="neuSnail&#39;s blog">
+<meta property="og:description" content="强引用(StrongReference)强引用是最常见的引用，下面例子中使用new关键字以及赋值操作创建出来的引用都是强引用1234//a 是ObjectA的强引用ObjectA a = new ObjectA();//b 是ObjectA的强引用ObjectA b = a; 强引用不会被垃圾回收器回收，当内存空间不足时，jvm宁愿抛出oom使进城终止也不会随意回收具有强引用的对象。把一个对象的引">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-15T05:42:50.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java引用类型与内存泄露">
+<meta name="twitter:description" content="强引用(StrongReference)强引用是最常见的引用，下面例子中使用new关键字以及赋值操作创建出来的引用都是强引用1234//a 是ObjectA的强引用ObjectA a = new ObjectA();//b 是ObjectA的强引用ObjectA b = a; 强引用不会被垃圾回收器回收，当内存空间不足时，jvm宁愿抛出oom使进城终止也不会随意回收具有强引用的对象。把一个对象的引">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/13/java引用类型/">
+
+
+
+
+
+  <title>java引用类型与内存泄露 | neuSnail's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">neuSnail's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">how you find this?</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/java引用类型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="neuSnail">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="neuSnail's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">java引用类型与内存泄露</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-13T13:23:03+08:00">
+                2019-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="强引用-StrongReference"><a href="#强引用-StrongReference" class="headerlink" title="强引用(StrongReference)"></a>强引用(StrongReference)</h3><p>强引用是最常见的引用，下面例子中使用new关键字以及赋值操作创建出来的引用都是强引用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//a 是ObjectA的强引用</span></span><br><span class="line">ObjectA a = <span class="keyword">new</span> ObjectA();</span><br><span class="line"><span class="comment">//b 是ObjectA的强引用</span></span><br><span class="line">ObjectA b = a;</span><br></pre></td></tr></table></figure></p>
+<p>强引用不会被垃圾回收器回收，当内存空间不足时，jvm宁愿抛出oom使进城终止也不会随意回收具有强引用的对象。把一个对象的引用显示的指向Null或者其他对象可以取消该对象的强引用，帮助虚拟机在下次gc时回收。但是上面的例子即使把a赋值为null<code>a=null</code>ObjectA也不会被gc回收，因为b还持有ObjectA的引用，此时我们称ObjectA仍是可达的。这种特性使得我们在开发时可能会造成内存泄露的可能，具体会在后文分析。</p>
+<h3 id="弱引用-WeakReference"><a href="#弱引用-WeakReference" class="headerlink" title="弱引用(WeakReference)"></a>弱引用(WeakReference)</h3><p>弱引用的生命周期比较短暂，在垃圾收集器扫描时如果发现了<strong>只有</strong>弱引用的对象就会将其回收。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ObjectA</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"object destruct"</span>);</span><br><span class="line">            <span class="keyword">super</span>.finalize();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testReference</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Integer a = <span class="keyword">new</span> ObjectA();</span><br><span class="line">        WeakReference b = <span class="keyword">new</span> WeakReference&lt;&gt;(a);</span><br><span class="line">        a = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(b.get());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">null</span><br><span class="line">object destruct</span><br></pre></td></tr></table></figure></p>
+<p>上面的例子中b是a的一个弱引用，此时ObjectA有两个引用，一个强引用a和一个弱引用b，将a置为null,此时ObjectA只有一个弱引用，之后执行gc会将弱引用回收。</p>
+<p>如果这里没有把a置为null，gc是不会把弱引用回收的。</p>
+<h4 id="referenceQueue"><a href="#referenceQueue" class="headerlink" title="referenceQueue"></a>referenceQueue</h4><p>在创建弱引用时，构造函数提供了一个重载可以传入一个ReferenceQueue对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">WeakReference</span><span class="params">(T referent, ReferenceQueue&lt;? <span class="keyword">super</span> T&gt; q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent, q);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>当一个对象被GC回收掉时，指向他的引用类型会被放入这个referenceQueue中，比如上面的例子如果使用referenceQueue的话：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testReference</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ObjectA a = <span class="keyword">new</span> ObjectA();</span><br><span class="line">        <span class="comment">//创建一个队列</span></span><br><span class="line">        ReferenceQueue&lt;ObjectA&gt; queue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</span><br><span class="line">        <span class="comment">//创建弱引用并传入队列</span></span><br><span class="line">        WeakReference b = <span class="keyword">new</span> WeakReference&lt;&gt;(a,queue);</span><br><span class="line">        a = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(b.get());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">        	<span class="comment">//阻塞的从队列中获取值</span></span><br><span class="line">            System.out.println(queue.remove());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">null</span><br><span class="line">object destruct</span><br><span class="line">java.lang.ref.WeakReference@7b1d7fff</span><br></pre></td></tr></table></figure></p>
+<p>可以看到再ObjectA被GC掉之后会将弱引用B放入queue中。不止是弱引用，下面的软引用和虚引用都可以使用referenceQueue.</p>
+<h3 id="软引用-SoftReference"><a href="#软引用-SoftReference" class="headerlink" title="软引用(SoftReference)"></a>软引用(SoftReference)</h3><p>软引用的生命力比弱引用强一些，当一个对象只有软引用时，若内存空间足够则不会被回收。如果内存空间不够则对象会被系统回收。</p>
+<p>软引用比较适合做缓存，当创建的缓存较多导致内存不够时可以回收这些软引用。</p>
+<h3 id="虚引用-PhantomReference"><a href="#虚引用-PhantomReference" class="headerlink" title="虚引用(PhantomReference)"></a>虚引用(PhantomReference)</h3><p>虚引用和前面几种引用不同，它不会决定对象的生命周期。如果一个对象只有虚引用，那它和没有引用一样会被回收。虚引用只能和ReferenceQueue联合使用，用来追踪对象被GC回收的活动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//PhantomReference在任何时候调用get方法都只会返回null</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//PhantomReference仅有的一个构造函数，必须传入ReferenceQueue</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PhantomReference</span><span class="params">(T referent, ReferenceQueue&lt;? <span class="keyword">super</span> T&gt; q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent, q);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h3><p>所谓内存泄露就是指某些对象已经不使用了但是还拥有强引用导致垃圾回收器无法回收这些内存造成内存的浪费。<br>内存泄露最常见的情景就是在使用集合时，比如hashMap，List等。尤其是在静态类和单例模式中使用时</p>
+<p>在下面的示例中testMemoryLeak()方法向objectRepo中插入了一条数据，然后使用repoMap执行一些逻辑，最后objectKey置为null。这里其实不用显示把key置为null，因为函数栈执行完了objectKey的生命周期就结束了，会自动清除栈里的局部变量。<br>但是ObjectKey(“keyA”)不会被GC回收，因为hashMa的entry里还持有ObjectKey(“keyA”)的强引用。而这个objectKey在接下来不会再使用但占据的空间又不会被释放，便造成了内存的浪费。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;ObjectKey, String&gt; objectRepo = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testMemoryLeak</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      ObjectKey objectKey = <span class="keyword">new</span> ObjectKey(<span class="string">"keyA"</span>);</span><br><span class="line">      objectRepo.put(objectKey, <span class="string">"valueA"</span>);</span><br><span class="line">      <span class="comment">//使用仓储map执行某些逻辑</span></span><br><span class="line">      useObjectRepoDoSth();</span><br><span class="line">      objectKey = <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="WeakHashMap"><a href="#WeakHashMap" class="headerlink" title="WeakHashMap"></a>WeakHashMap</h4><p>为了解决这个问题,java提供了WeakHashMap。weakHashMap中的Entry继承了WeakReference,可以看到在weakHashMap的构造函数中，创建了一个key的弱引用并将ReferenceQueue传入（该queue被WeakReference对象持有)。当key对象的外部不存在强引用时如果触发GC，该key的弱引用会被添加到referenceQueue中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">WeakReference</span>&lt;<span class="title">Object</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">        V value;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">        Entry&lt;K,V&gt; next;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Creates new entry.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Entry(Object key, V value,</span><br><span class="line">              ReferenceQueue&lt;Object&gt; queue,</span><br><span class="line">              <span class="keyword">int</span> hash, Entry&lt;K,V&gt; next) &#123;</span><br><span class="line">            <span class="comment">//在这里创建了一个key的弱引用</span></span><br><span class="line">            <span class="keyword">super</span>(key, queue);</span><br><span class="line">            <span class="keyword">this</span>.value = value;</span><br><span class="line">            <span class="keyword">this</span>.hash  = hash;</span><br><span class="line">            <span class="keyword">this</span>.next  = next;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而在getTable()获取hash表的方法中会调用expungeStaleEntries方法，该方法会获取referenceQueue中的所有元素，并对每个key将其value置为null(value是强引用置为null方便jvm回收)并从table中移出对应的entry<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Entry&lt;K,V&gt;[] getTable() &#123;</span><br><span class="line">        expungeStaleEntries();</span><br><span class="line">        <span class="keyword">return</span> table;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">expungeStaleEntries</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Object x; (x = queue.poll()) != <span class="keyword">null</span>; ) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (queue) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">                    Entry&lt;K,V&gt; e = (Entry&lt;K,V&gt;) x;</span><br><span class="line">                <span class="keyword">int</span> i = indexFor(e.hash, table.length);</span><br><span class="line"></span><br><span class="line">                Entry&lt;K,V&gt; prev = table[i];</span><br><span class="line">                Entry&lt;K,V&gt; p = prev;</span><br><span class="line">                <span class="keyword">while</span> (p != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    Entry&lt;K,V&gt; next = p.next;</span><br><span class="line">                    <span class="keyword">if</span> (p == e) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (prev == e)</span><br><span class="line">                            table[i] = next;</span><br><span class="line">                        <span class="keyword">else</span></span><br><span class="line">                            prev.next = next;</span><br><span class="line">                        <span class="comment">// Must not null out e.next;</span></span><br><span class="line">                        <span class="comment">// stale entries may be in use by a HashIterator</span></span><br><span class="line">                        e.value = <span class="keyword">null</span>; <span class="comment">// Help GC</span></span><br><span class="line">                        size--;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    prev = p;</span><br><span class="line">                    p = next;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>而getTable()方法在get、put方法中都会调用，所以在每次的get/set时都会执行一次清理工作<br>举个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWeakHashMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        WeakHashMap&lt;ObjectKey, String&gt; weakHashMap = <span class="keyword">new</span> WeakHashMap&lt;&gt;();</span><br><span class="line">        ObjectKey keyA = <span class="keyword">new</span> ObjectKey(<span class="string">"keyA"</span>);</span><br><span class="line">        String valueA = <span class="keyword">new</span> String(<span class="string">"valueA"</span>);</span><br><span class="line"></span><br><span class="line">        weakHashMap.put(keyA, valueA);</span><br><span class="line">        keyA = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(weakHashMap.get(keyA));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ObjectKey</span> </span>&#123;</span><br><span class="line">        String name;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ObjectKey</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//input : null</span></span><br></pre></td></tr></table></figure></p>
+<p>ps: 这个例子我在跑的时候开了debug，然后在最后一句system.out.println(weakHashMap.get(keyA))前打的断点，结果发现在调用get方法前weakHashMap中的弱引用已经被清空了。。让我百思不得其解，以为weakHashMap有自动的清空机制？后来才发现调试器会调用一次map的size()方法来展示长度，而weakHashMap中的size()方法也会调用一次<code>expungeStaleEntries</code>方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (size == <span class="number">0</span>)</span><br><span class="line">           <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">       expungeStaleEntries();</span><br><span class="line">       <span class="keyword">return</span> size;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/06/CountDownLatch、CyclicBarrier和Semaphore/" rel="next" title="CountDownLatch、CyclicBarrier和Semaphore">
+                <i class="fa fa-chevron-left"></i> CountDownLatch、CyclicBarrier和Semaphore
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/15/jvm逃逸分析/" rel="prev" title="jvm逃逸分析">
+                jvm逃逸分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="neuSnail">
+            
+              <p class="site-author-name" itemprop="name">neuSnail</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用-StrongReference"><span class="nav-number">1.</span> <span class="nav-text">强引用(StrongReference)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#弱引用-WeakReference"><span class="nav-number">2.</span> <span class="nav-text">弱引用(WeakReference)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#referenceQueue"><span class="nav-number">2.1.</span> <span class="nav-text">referenceQueue</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软引用-SoftReference"><span class="nav-number">3.</span> <span class="nav-text">软引用(SoftReference)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚引用-PhantomReference"><span class="nav-number">4.</span> <span class="nav-text">虚引用(PhantomReference)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存泄露"><span class="nav-number">5.</span> <span class="nav-text">内存泄露</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WeakHashMap"><span class="nav-number">5.1.</span> <span class="nav-text">WeakHashMap</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">neuSnail</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

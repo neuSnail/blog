@@ -346,7 +346,7 @@ function genA()
 ```
 
 在funcA中funcB();会返回funcB的执行结果，但是在genA中，`yield genB();`会返回一个Generator对象，而不是genB的最终执行结果。想得到genB的执行结果需要对genB进行调度，而genB中又可能有genC()genD()的协程嵌套，所以为了让协程像函数一眼正常调用，这里使用协程栈来实现。
-![coroutine1](/Users/zhangqiushi/Downloads/coroutine1.png)
+![coroutine1](https://gitee.com/neusnail/img/raw/master/blogimg/coroutine1.png)
 如上图，当调度器获取到GenA（父协程）的返回值is instance of Generator时，调度器会把父协程push到stack中，然后把子协程分配给Task，继续调度子协程。如此反复直到最后一个子协程返回，然后开始pop，将stack中的协程依次取出，接下来会在handleStackPop里详细说明。
 `3:handleAsyncJob`
  handleAsyncJob是整个协程调度的核心
@@ -402,7 +402,7 @@ private function handleAsyncJob($value)
 execute方法接收一个函数作为该异步操作完成之后的回调函数，在Mysqli类中的execute方法中，启动了一个异步swoole_task，将sql操作交给swoole_task异步执行，在执行结束后会执行queryReady方法，该方法在解析异步返回数据之后执行`$this->callback()`也就是之前在调度器中传入的 `asyncCallback`方法，该方法在检测异常之后会执行send()方法将异步执行的结果发送到中断处，继续执行。
 handleAsyncJob不会等待异步操作的返回结果，而是直接返回TASK_WAIT信号，回到上面的Task->run()方法可以看到TASK_WAIT信号会导致run()方法返回null,释放当前worker,调度流程图如下图所示，（segmentfault不支持图片缩放也不支持html语法是真的难受）
 
-![coroutine2](/Users/zhangqiushi/Downloads/coroutine2.png)
+![coroutine2](https://gitee.com/neusnail/img/raw/master/blogimg/coroutine2.png)
 
 `4:handleYieldValue`
 
@@ -426,12 +426,12 @@ private function handelYieldValue($value)
 
 当一次请求遇到IO的时候，同步操作会导致当前请求阻塞在IO处等待IO返回，体现在swoole上就是一个请求一直占用一个worker。
 
-![coroutine3](/Users/zhangqiushi/Downloads/coroutine3.png)
+![coroutine3](https://gitee.com/neusnail/img/raw/master/blogimg/coroutine3.png)
 
 但是当使用了协程调度之后，用户可以在阻塞的地方通过yield手动中断，交由swoole_task去异步操作，同时释放worker占用来处理其他请求。
 当异步处理执行结束后再继续调度。
 
-![coroutine4](/Users/zhangqiushi/Downloads/coroutine4.png)
+![coroutine4](https://gitee.com/neusnail/img/raw/master/blogimg/coroutine4.png)
 
 `注意php的协程只负责中断，异步操作是Swoole_task做的`
 

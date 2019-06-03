@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近换工作，闭关了两个月后连续面了两周，把西湖拱墅余杭离家不太远的能叫上名的公司差不多都面了一。每天最多三个面试，真是累的要死。下面记录下面试时的技术问题和面试体验供要跳槽的朋友参考。 技术问题 java8的特性 这点可能是因为简历上写了，所以问的比较多，我一般就答lambda表达式、stream、函数式接口和interface default值。一般面试官会追问stream的优点，这里一般回答p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试总结">
+<meta property="og:url" content="http://yoursite.com/2019/06/02/mianshi/index.html">
+<meta property="og:site_name" content="neuSnail&#39;s blog">
+<meta property="og:description" content="最近换工作，闭关了两个月后连续面了两周，把西湖拱墅余杭离家不太远的能叫上名的公司差不多都面了一。每天最多三个面试，真是累的要死。下面记录下面试时的技术问题和面试体验供要跳槽的朋友参考。 技术问题 java8的特性 这点可能是因为简历上写了，所以问的比较多，我一般就答lambda表达式、stream、函数式接口和interface default值。一般面试官会追问stream的优点，这里一般回答p">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-02T08:32:05.820Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面试总结">
+<meta name="twitter:description" content="最近换工作，闭关了两个月后连续面了两周，把西湖拱墅余杭离家不太远的能叫上名的公司差不多都面了一。每天最多三个面试，真是累的要死。下面记录下面试时的技术问题和面试体验供要跳槽的朋友参考。 技术问题 java8的特性 这点可能是因为简历上写了，所以问的比较多，我一般就答lambda表达式、stream、函数式接口和interface default值。一般面试官会追问stream的优点，这里一般回答p">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/02/mianshi/">
+
+
+
+
+
+  <title>面试总结 | neuSnail's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">neuSnail's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">how you find this?</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/mianshi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="neuSnail">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="neuSnail's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">面试总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-02T16:31:30+08:00">
+                2019-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近换工作，闭关了两个月后连续面了两周，把西湖拱墅余杭离家不太远的能叫上名的公司差不多都面了一。每天最多三个面试，真是累的要死。下面记录下面试时的<strong>技术问题</strong>和<strong>面试体验</strong>供要跳槽的朋友参考。</p>
+<h3 id="技术问题"><a href="#技术问题" class="headerlink" title="技术问题"></a>技术问题</h3><ul>
+<li><strong>java8的特性</strong> 这点可能是因为简历上写了，所以问的比较多，我一般就答lambda表达式、stream、函数式接口和interface default值。一般面试官会追问stream的优点，这里一般回答parallelStream可以并行处理，再深挖的话并行流的实现原理是fork/join框架以及并行流带来的并发问题。</li>
+<li><strong>hashMap和concurrentHashMap</strong>这个是送分题，hashmap的put和扩容源码一定要看一遍，会问到树化目的以及阈值。concurrentHashMap 1.8的实现和之前不同要注意。这里还会问hashMap为什么不是线程安全的会有什么问题之类的以及concurrentHashMap是怎么解决的。</li>
+<li><strong>synchronized锁相关</strong> 这里问的也比较多，会问到synchronized的重入性，以及实现原理。包括moniter监视器的概念以及对象头的结构。深入一点还会问到偏向锁、轻量级锁、重量级锁的概念以及锁转换的条件。</li>
+<li><strong>ReentrantLock相关</strong> ReentrantLock是基于AQS实现的，建议ReentrantLock和AQS的源码都看一遍，写的很好。这里会问到ReentrantLock的实现，一般答到同步队列加自旋锁(中间会park)就可以了，其他的像condition条件队列以及读写锁等深入点的我没见到有问的。</li>
+<li><strong>内存模型和可见性问题</strong> 注意这里区分jvm的内存分区和内存模型，最好和面试官确认下，有的面试官自己都不清楚区别。内存模型值的是主存和线程工作内存的问题以及因此导致的内存可见性问题，这里一般答到使用volatile关键字和锁控制就行了。深入点会问happens-before原则以及volatile的实现原理(内存屏障在，有的还会问到指令重排</li>
+<li><strong>jvm分区和GC算法</strong> 分区就是指堆栈和元空间(1.7之前的永久代) 这些东西，一般会问到gc算法，这里就清楚常用的serial、ParNew 、parallel Scavenge、cms和g1就行。一般深入问的就是CMS和G1。但也不会问太深就知道CMS的几个流程以及CMS的优点(并发标记)，以及G1相对CMS的优点(分块&amp;标记整理)，这里不会太深入，像三色标记以及dirty card都没有问到。年轻代gc就会问分几个区，为什么这么做，答出复制算法的原理就好。</li>
+<li><strong>线程池</strong> 这里问的也比较多，最常问的就是创建线程池时的几个参数，coreSize,maxSize,阻塞队列,aliveTime,以及拒绝策略。 然后就是这些参数的含义和作用时机要清楚。深入点会问线程池的原理，这里大概讲下阻塞队列和worker的工作原理就行不会问太深。有的面试官还会延伸到阻塞队列类型以及他们的区别，实现原理到是没有问到。</li>
+<li><strong>类加载机制</strong> 这个问到的也很多，要清楚classLoader的作用原理、classloader的类型以及双亲委派的机制。深入点还会问到双亲委派的目的，这里要从重复加载和安全两方面分析，再深入会问到自定义classloader的实现和目的这里可以参考tomcat的自定义classloader。</li>
+<li><strong>反射</strong> 反射问的不多，印象中就阿里问了，浅一点会问反射怎么用以及使用的目的，深入的话会问实现的原理</li>
+<li><strong>bean生命周期</strong> 这个问到的也不少，我当时把spring容器启动和refresh的源码看了下，但是应付面试没必要，去搜下答案就好了不会问太深。</li>
+<li><strong>aop和动态代理</strong> 这里会问aop的实现原理，你回答动态代理面试官会追问实现类型，这里可以回答jdk动态代理和cglib的区别不会太深入(只有阿里追问到了AspectJ和织入)，再深入一点会问动态代理是根据什么实现的，答案是反射(建议看下源码)。这里还经常会追问到spring事务的实现机制，答案也是动态代理。然后有些面试官会问到自调用事务失效的问题，就是一个事务方法调用另一个事务方法失效的问题。阿里面试官深入到了失效的原理，答案是动态代理时自调用时执行的是this.method。而this是指原始对象而不是代理对象。</li>
+<li><strong>arraylist和linklist</strong> 送分题不说了</li>
+<li><strong>TCP和HTTP</strong> 这个可能是我简历提到了，问到的还不少，tcp的话就是三次握手和四次挥手以及期间的状态，只有一个面试官问到了tcp和udp的区别以及滑动窗口。http的话有几个面试官问到了常见的状态码。</li>
+<li><strong>SQL注入和CQRS</strong> 可能看我是信息安全毕业的问到的还不少，阿里的面试官让我手写一个sql注入，其他的一般都是问mybatis怎么解决sql注入。cqrs一般问的是概念以及解决方案(token)</li>
+<li><strong>https</strong> 阿里那面问的，让我画一下https的建立流程，之前还技术分享过，当时一紧张忘了妈的。</li>
+<li><strong>Myisam和innoDB区别</strong> 令人意外这个我大学毕业时候就问烂了的问题还有那么多人问</li>
+<li><strong>索引数据结构</strong> 这里问的不少，要了解B树和B+树的区别(也就是聚集索引和非聚集索引的原理)，阿里那面还问到为什么用B树做数据结构，答案是磁盘友好，一个节点放一个磁道的数据(这种变态问题我都答上了最后都没过妈的)，还会引申索引排序原理,这里按B+树的结构特点答就好了。</li>
+<li><strong>索引最左匹配</strong> 送分题 注意where a =1 and b=2 和 where b=2 and a=1 是一样的，mysql没那么傻不会因为你写的顺序不一样走不到最左匹配</li>
+<li><strong>mysql优化</strong> 这里我一般就答explain的使用以及大分页的问题，还会引申到<strong>索引覆盖</strong></li>
+<li><strong>redis存储结构</strong> 就答下redis能存那些数据类型</li>
+<li><strong>redis优点</strong> 这里一般是问IO多路复用</li>
+<li><strong>redis回收策略(保持热点数据)</strong> lru tts 等回收策略 </li>
+<li><strong>redis分布式锁</strong> 这里坑比较多建议系统的看下，包括setNx的使用以及如何原子的expire(新版本可以直接set同时设置expire) 还有执行超时重复释放的问题(通过cas来解决 redis cas又涉及到redis的watch机制)</li>
+<li><strong>缓存击穿/穿透 雪崩</strong> 说实话这里没问到 但建议看下</li>
+<li><strong>分布式CAP 问题</strong> 这里一般答出概念就好，只有阿里那面延伸问到你们业务选择的是C还是A</li>
+<li><strong>dubbo和Zookeeper</strong> 这里问的不少 会到dubbo的服务注册和调用过程以及zookeeper的原子广播。但不会问太深。问的多的是dubbo序列化的问题以及dubbo的协议选择和区别。有的还会问负载均衡策略，也不会太深一般答个随机和加权轮询就好了，只有一个面试官问到了一致性hash以及hash分布不均衡的处理方案。</li>
+<li><strong>序列化</strong> 意料之外这里问的不少 包括序列化的几种方案 以及存在的坑。还会问到transient和serialVersionUID的作用</li>
+<li><strong>ES</strong> es这里我建议不熟悉就不要写了，我写了有几个问了但也只能答出使用，原理没有深入去了解,就知道是个基于分词的高效全文索引。。。</li>
+<li><strong>消息队列</strong> 消息队列我们用的nsq真的没有听过的，建议看的话看看常用的rocketMQ之类的实现原理，问到的不多。</li>
+<li><strong>内存泄露</strong> 内存泄露的原因和解决方案</li>
+<li><strong>JDK工具和线上问题检测</strong> 意料之外问的很多 会问线上cpu跑满 以及oom怎么排查 这里结合top ps命令以及jstack、jmap命令分析下就可以</li>
+</ul>
+<h4 id="算法-amp-笔试"><a href="#算法-amp-笔试" class="headerlink" title="算法&amp;笔试"></a>算法&amp;笔试</h4><ul>
+<li>阿里：三数求和 在一个数组中找到三个数想加等于X 这个是二数求和的延伸，用三个指针来做</li>
+<li>阿里&amp;头条：写一个单例模式 注意双重加锁和指令重排问题 或者使用静态代码块来实现</li>
+<li>阿里：写一个策略模式</li>
+<li>阿里：一个非降序数组 找到第一个&lt;=a 的数  用二分查找来做 我当时没写好感觉有问题</li>
+<li>阿里：给你一个数返回是否是素数  这个他当时想让我用筛法提前把所有素数放到map里然后o1来解决 可惜我没get到他的点 就每次来算一遍</li>
+<li>阿里：两个线程交替打印奇偶数。 最Low的就是用await和notify来做。我是参考AQS的实现用自旋加状态控制标识来做的</li>
+<li>阿里：5亿个数排序 这个大数排序不能直接读到内存里来做，应该是分成多个文件然后用归并来做 当时没有时间了没写出来</li>
+<li>头条：一个数 清楚相邻的连个一样的数 比如 1223 -&gt; 13  1221-&gt;null  这个就是用栈来实现，栈头栈尾相等就出栈</li>
+<li>头条：一堆石头，每次挑两个最大的碰撞，剩余的是两个石头的质量差，最后最沉的是多少。  这个明显是用最大堆来做，可惜我不会写最大堆的建堆代码 2333当时现撸没写出来</li>
+<li>头条：一个链表，每两个节点翻转一下 要求On实现。 这个应该是用一个节点来记录prev来做</li>
+</ul>
+<h3 id="面试体验"><a href="#面试体验" class="headerlink" title="面试体验"></a>面试体验</h3><h4 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h4><p>体验：良</p>
+<p>阿里这面的面试体验总体有点纠结，首先技术面试官是很有水平很有素养的，是我面试这么多公司体验最好的。答的不好的地方会去引导你，而且很有耐心，有一面我笔试题卡了半个小时，面试官也没有不耐烦。但是HR的体验就有点迷了，阿里这里我面了两个BU，面的第一个BU先是晚上有个电话面(这里想吐槽下阿里的电面约时间都是告诉你晚上不说具体时间)，之后去现场面了三轮技术面。技术面总体感觉还不错，尤其和二面面试官聊的很好，但是笔试题做的很烂，一道三数求和卡了我半小时最后也没做好，只能说自己算法太菜了(回来发现这道题就是leetcode第一题二数求和的拓展，妈的)。说回来等HR电面，结果两天后技术面试官打电话来说他们临时缩紧招聘政策，不招p6了… 说和我聊的很好，加了微信以后有机会再联系我，不知道只是说辞还是真的这么倒霉。之后让同事帮我内推口碑，和上个BU联系让他们释放简历我好投口碑，结果这个BU的HR擅自就把我简历转到新零售部门了。然后告诉我明天新零售那面会联系我… 无语。 之后新零售的HR联系我直接让我去现场面，一轮技术面之后是一轮HR和技术的交叉面，一个问题接一个问题不停的抛，三个小时下来我嗓子都哑了，但问题基本上都答上了。回来等了两天之后没消息去问HR，告诉我HR面挂了。终于体会到阿里HR的强大 呵呵哒。既然HR挂人率这么高为什么不先面HR？技术面试官的时间不值钱吗？后来又有一个BU捞到我的简历，一面之后我拿了滴滴offer就告诉那面不面了，虽然这个BU做的业务很核心，但面阿里真的太累了。</p>
+<h4 id="婚礼纪"><a href="#婚礼纪" class="headerlink" title="婚礼纪"></a>婚礼纪</h4><p>体验：优</p>
+<p>婚礼纪的面试体验还是不错的，办公室装修很漂亮，尤其是前台。不愧是做婚礼的。之后有个穿正装的小哥引导我到会议室，给我倒水。一轮技术面聊的很好。之后是主管和HR一起面，聊了一会HR和主管出去讨论，我隐约听到HR说”他正式工作才一年多”之类的， 主管说”你不要看这个” 感谢小哥哈。之后HR又单独和我聊了很久。第二天HR加了我微信管我要工资证明。然后过了周末之后HR给我答复我之前工资太高了只能给平薪。。。  我要的已经很低了，最低接受的线都压到了12%涨幅左右，HR还是不给。托了两天之后跟HR说放弃了，本来想先接收有更好的再放鸽子，但感觉这样做不太好。面试体验总体还是不错的，HR给结果很快虽然薪资太低。他们无限按最低交，公积金按工资的10%。</p>
+<h4 id="酷家乐"><a href="#酷家乐" class="headerlink" title="酷家乐"></a>酷家乐</h4><p>体验：一般</p>
+<p>电面正常，但是我和电面面试官提到我不想做我在上家公司的业务。之后他们的HR问我这个事情，我说如果待遇高点的话也可以接受，HR问我要什么待遇，我随口说至少得比我现在工资高吧(被婚礼纪的平薪offer搞怕了)，然后和HR说无论过不过都和我说下。结果HR就一直没理我。</p>
+<h4 id="爱库存"><a href="#爱库存" class="headerlink" title="爱库存"></a>爱库存</h4><p>体验：差</p>
+<p>本来约的现场面，结果我那天晚上不太舒服就和HR商量改成了电面，结果电面的面试官真是让人不爽。问个问题我回答了之后经常来一句你这没答到点上啊，我想考察的是xxx …. sb吗，你想考察深一点的就往下问啊。 后面还开嘲讽，怼了他两句之后就挂了。震惊的是后来得知电面居然过了。之后HR打电话来问电面聊的怎么样，我说不怎么样，然后就没有然后了。公司996，问面试官他还说不加班，呵呵哒。</p>
+<h4 id="大搜车"><a href="#大搜车" class="headerlink" title="大搜车"></a>大搜车</h4><p>体验：一般</p>
+<p>大搜车的园区是真的偏，附近还有拆迁的，环境很差。技术面两场都是现场，第一场的面试官像没睡醒一样，无精打采。二面面试官聊的不错还一起膜蛤了下。槽点是HR面，一直在问我学校里的事，成绩怎么样啊，当时为什么跟老师做项目啊，做的是啥啊。后来是在受不了了问她 excuse me我都毕业快两年了 你一直问我学校的事情干嘛？不过HR态度还算好。等技术面和等HR面等了好久，导致我下一家面试都不得不推迟。后来过了几天HR又打电话过来聊了点其他的，当时觉得大搜车太远了不太想去就随便敷衍两句。然后就没有然后了。大搜车五险一金是全额缴纳的。</p>
+<h4 id="企朋"><a href="#企朋" class="headerlink" title="企朋"></a>企朋</h4><p>体验：差</p>
+<p>电面正常，面试官说会有二面，HR会安排。结果过了一周HR才联系我，是我面的这些公司中间隔最久的。之后去现场等了好久都没人来，后来HR说技术面试官开会先HR面，HR面结束后又等了一会，之后技术面试官问我离职原因，我说个人发展和996。面试官说他也是有赞出来的，似乎对我的离职原因表示不满？之后就随便问了我两三个问题就让我回去了，然后就没有然后了。他家五险一金好像是最低还是按一定基数缴纳来着？反正不是全额。</p>
+<h4 id="格家网络"><a href="#格家网络" class="headerlink" title="格家网络"></a>格家网络</h4><p>体验：差</p>
+<p>直接现场面，面试官像没睡醒似的，有气无力的，问了一堆问题，记得除了tcp滑动窗口的算法实现基本上都答上了。然后告诉我等一下，等了一会前台妹子过来告诉我可以走了。WTF?  耍我呢还是HR刷KPI?</p>
+<h4 id="vivo"><a href="#vivo" class="headerlink" title="vivo"></a>vivo</h4><p>体验：一般</p>
+<p>一轮视频面，没啥难度，面试官告诉我接下来HR会联系我安排二面，然后就没有然后了，把我忘了？他家大小周。</p>
+<h4 id="默安科技"><a href="#默安科技" class="headerlink" title="默安科技"></a>默安科技</h4><p>体验：一般</p>
+<p>云舒开的安全公司。一轮电面，我投的是java开发，但是面试官好像不太懂java? 问了我几个网络协议和偏运维的的问题。唯一和java相关的问题就是问我java哪里比较熟。问他进去干嘛他说做jvm和其他语言底层的漏洞检测，但是从他的问题上完全没看出来。后来HR约我二面，因为距离太远加上暂时不想做安全就拒绝了。</p>
+<h4 id="fordeal"><a href="#fordeal" class="headerlink" title="fordeal"></a>fordeal</h4><p>体验：一般</p>
+<p>猎头帮联系的公司。一面技术电面，二面HR面也是电面，他们总部在广州杭州的是分部。需要经常去广州出差。因为是做的中东跨境电商，还要去中东出差，HR面的时候还一直问我对他们公司了解多少，我说知道是做中东跨境电商的，HR一直问我还知道什么，又不是啥出名公司我花时间了解你干嘛。也是因为不想出差和HR聊的很敷衍，然后就没然后了。他们大小周。</p>
+<h4 id="海拍客"><a href="#海拍客" class="headerlink" title="海拍客"></a>海拍客</h4><p>体验：良</p>
+<p>没啥槽点，两轮技术面一轮HR面，都挺正常的，二面技术面试官感觉水平不错，挖了我两个技术上的盲点。他们马上要搬新园区，新的办公环境还不错。五险一金记得是都按最低交。</p>
+<h4 id="涂鸦智能"><a href="#涂鸦智能" class="headerlink" title="涂鸦智能"></a>涂鸦智能</h4><p>体验：良</p>
+<p>吐槽下面试是在走廊，他们大小周，我周六去面的。两轮技术面一轮HR,没啥特殊槽点，技术面问题没啥难度。五险一金全额交。</p>
+<h4 id="字节跳动"><a href="#字节跳动" class="headerlink" title="字节跳动"></a>字节跳动</h4><p>体验：差</p>
+<p>三轮视频面，每一轮都要做两道算法题。前两轮四道笔试题我就做出来两道，以为要凉了结果收到三面的通知，这个三面面试官真是蛋疼，做完题之后问我项目技术上的难点，我说了两个他说这没啥难的，你觉得这就难了吗？我一脸懵逼说我们这个业务比较复杂。他说那你就说技术上没难点不得了。WTF不tm是你问的技术上的难点吗？有毛病？那我就说了下技术上的难点，涉及到资源的业务线拆分合并之类的，他又怼我业界上的crm不都是这么做的吗，有什么难的？我tm真是无语 这么大个公司找这种人来面试，面试官都不需要培训的吗？和阿里好好学学面试官的基础素养好吗。</p>
+<h4 id="滴滴"><a href="#滴滴" class="headerlink" title="滴滴"></a>滴滴</h4><p>体验：优</p>
+<p>滴滴这面我开始问猎头有没有HC，猎头说很久没有HC了，我去boss上看java也就挂了两个职位招聘，一个是5-10年的资深，另一个是3-5年的数据开发。我就随手投了下数据开发也没指望有人理我。过了两天电面面试官约我电面，可能是看我简历做的都是业务就没问我数据相关的，问的都是项目和java基础，聊的不错，问我离职原因我也直言是996和氛围问题。之后约了现场，现场面我的应该是数据的leader，不苟言笑看起来挺严肃的一个人，简单的问了些java和数据结构。之后问我有没有接触过数据开发我直言没有。之后让我回去等电话面试(他们HR面试官在北京)。当天晚上他们大部门的Leader就打电话来简单聊了下，和我说他们发现我这里之前做的偏业务，考不考虑去做业务。我当然ok了，之后加了我微信说当晚就会让业务团队的面试官联系我。晚上十点面试官打来电话(我后来问他是不是加班到10点他说不是，是和朋友吃饭 233)，聊了很久从技术到个人发展还有最近读了什么书，感觉聊的不错。之后快十一点的时候大部门leader发微信说明天就会安排HR面，第二天HR面没问什么刁钻问题一切正常。第三天周四收到邮件要薪资证明，过了周末下周一晚上收到口头offer，因为之前offer谈的都不顺所以我这面压低了期待薪资，只要了15-20%的涨幅，但出乎我的意料滴滴并没有因此压我薪资给了我30%多的涨幅。感谢滴滴几位技术面试官帮我推动面试流程(当时手里还有婚礼纪offer快到期了)，感谢HR没有压我工资，随手一投的简历居然中了真的缘分。 </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/03/tcp-ip简析/" rel="next" title="tcp简析">
+                <i class="fa fa-chevron-left"></i> tcp简析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="neuSnail">
+            
+              <p class="site-author-name" itemprop="name">neuSnail</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#技术问题"><span class="nav-number">1.</span> <span class="nav-text">技术问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算法-amp-笔试"><span class="nav-number">1.1.</span> <span class="nav-text">算法&amp;笔试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面试体验"><span class="nav-number">2.</span> <span class="nav-text">面试体验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#阿里"><span class="nav-number">2.1.</span> <span class="nav-text">阿里</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#婚礼纪"><span class="nav-number">2.2.</span> <span class="nav-text">婚礼纪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#酷家乐"><span class="nav-number">2.3.</span> <span class="nav-text">酷家乐</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爱库存"><span class="nav-number">2.4.</span> <span class="nav-text">爱库存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#大搜车"><span class="nav-number">2.5.</span> <span class="nav-text">大搜车</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#企朋"><span class="nav-number">2.6.</span> <span class="nav-text">企朋</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#格家网络"><span class="nav-number">2.7.</span> <span class="nav-text">格家网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vivo"><span class="nav-number">2.8.</span> <span class="nav-text">vivo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#默安科技"><span class="nav-number">2.9.</span> <span class="nav-text">默安科技</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fordeal"><span class="nav-number">2.10.</span> <span class="nav-text">fordeal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#海拍客"><span class="nav-number">2.11.</span> <span class="nav-text">海拍客</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#涂鸦智能"><span class="nav-number">2.12.</span> <span class="nav-text">涂鸦智能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字节跳动"><span class="nav-number">2.13.</span> <span class="nav-text">字节跳动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#滴滴"><span class="nav-number">2.14.</span> <span class="nav-text">滴滴</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">neuSnail</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

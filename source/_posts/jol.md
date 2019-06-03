@@ -112,7 +112,7 @@ Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
 * 大端序： 数据的高位字节存放在地址的低端 低位字节存放在地址高端
 比如一个整形0x1234567 ，1是高位数据，7是低位数据。按照小端序01放在内存地址的高位，比如放在0x100  ，23就放在0x101以此类推。大端序反之。
 ![字节序](https://gitee.com/neusnail/img/raw/master/blogimg/%E5%AD%97%E8%8A%82%E5%BA%8F.gif)
-以为地址序是从低到高的所以大端序更符合人类的阅读习惯。而大部分intel和amd的cpu都是使用的小端序。关闭指针压缩的输出如下:
+因为堆的地址序是从低到高的所以大端序更符合人类的阅读习惯。而大部分intel和amd的cpu都是使用的小端序。关闭指针压缩的输出如下:
 ```
 jdk_test.ObjectHeadTest object internals:
  OFFSET  SIZE   TYPE DESCRIPTION                               VALUE

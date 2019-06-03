@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="jvm,gc,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近看了下关于CMS和G1的一些文章，真的很蛋疼，很多文章你抄我我抄他,抄的到处都是错。或者就扔几个粗粒度的概念在那，真的很浪费查资料的人的时间。 花了一天时间看了下RednaxelaFX大神的问答帖和其他资料整理了下CMS和G1的一些实现细节。基本概念以及搜索引擎一搜一大堆的东西就不在这里赘述了。想到哪写到哪 没什么顺序比较乱。 CMS初始标记（initial marking）阶段的gc roo">
+<meta name="keywords" content="jvm,gc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CMS和G1的一些细节">
+<meta property="og:url" content="http://yoursite.com/2019/04/16/CMS和G1的一些细节/index.html">
+<meta property="og:site_name" content="neuSnail&#39;s blog">
+<meta property="og:description" content="最近看了下关于CMS和G1的一些文章，真的很蛋疼，很多文章你抄我我抄他,抄的到处都是错。或者就扔几个粗粒度的概念在那，真的很浪费查资料的人的时间。 花了一天时间看了下RednaxelaFX大神的问答帖和其他资料整理了下CMS和G1的一些实现细节。基本概念以及搜索引擎一搜一大堆的东西就不在这里赘述了。想到哪写到哪 没什么顺序比较乱。 CMS初始标记（initial marking）阶段的gc roo">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/G1.png">
+<meta property="og:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/RsetAndCardTable.jpg">
+<meta property="og:updated_time" content="2019-04-17T13:26:49.545Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CMS和G1的一些细节">
+<meta name="twitter:description" content="最近看了下关于CMS和G1的一些文章，真的很蛋疼，很多文章你抄我我抄他,抄的到处都是错。或者就扔几个粗粒度的概念在那，真的很浪费查资料的人的时间。 花了一天时间看了下RednaxelaFX大神的问答帖和其他资料整理了下CMS和G1的一些实现细节。基本概念以及搜索引擎一搜一大堆的东西就不在这里赘述了。想到哪写到哪 没什么顺序比较乱。 CMS初始标记（initial marking）阶段的gc roo">
+<meta name="twitter:image" content="https://gitee.com/neusnail/img/raw/master/blogimg/G1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/16/CMS和G1的一些细节/">
+
+
+
+
+
+  <title>CMS和G1的一些细节 | neuSnail's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">neuSnail's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">how you find this?</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/16/CMS和G1的一些细节/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="neuSnail">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="neuSnail's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">CMS和G1的一些细节</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-16T22:04:26+08:00">
+                2019-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近看了下关于CMS和G1的一些文章，真的很蛋疼，很多文章你抄我我抄他,抄的到处都是错。或者就扔几个粗粒度的概念在那，真的很浪费查资料的人的时间。</p>
+<p>花了一天时间看了下<code>RednaxelaFX</code>大神的问答帖和其他资料整理了下CMS和G1的一些实现细节。基本概念以及搜索引擎一搜一大堆的东西就不在这里赘述了。想到哪写到哪 没什么顺序比较乱。</p>
+<h3 id="CMS初始标记（initial-marking）阶段的gc-root到底都有什么？"><a href="#CMS初始标记（initial-marking）阶段的gc-root到底都有什么？" class="headerlink" title="CMS初始标记（initial marking）阶段的gc root到底都有什么？"></a>CMS初始标记（initial marking）阶段的gc root到底都有什么？</h3><blockquote>
+<p>在CMS initial mark的上下文里，根集合并不包括young gen而是只有stack、register、globals这些常规的。这是因为在接下来的CMS concurrent mark阶段CMS会顺着初始的根集合把young gen里的活对象都遍历了。所以从CMS initial mark + concurrent mark结合在一起的角度看，young gen仍然是根集合的一部分（因为被扫描但不被收集）。</p>
+</blockquote>
+<p>也就是说实际初始标记阶段的gc root set是不包括新生代的 后来在并发标记阶段会去遍历(确切的说是 在预清理阶段）。不过在remark阶段还是会重新遍历新生代的，原因和老年代的dirty card一样，新生代在执行时也会存在这种动态的dirty card.</p>
+<h3 id="G1-region图示"><a href="#G1-region图示" class="headerlink" title="G1 region图示"></a>G1 region图示</h3><blockquote>
+<p>摘自美团技术博客<a href="https://tech.meituan.com/2016/09/23/g1.html" target="_blank" rel="noopener">https://tech.meituan.com/2016/09/23/g1.html</a></p>
+</blockquote>
+<p><img src="https://gitee.com/neusnail/img/raw/master/blogimg/G1.png" alt="G1"></p>
+<p>H表示这些Region存储的是巨大对象（humongous object，H-obj），即大小大于等于region一半的对象,H-obj直接分配到了old gen，防止了反复拷贝移动。</p>
+<h3 id="什么情况下会发生漏标？"><a href="#什么情况下会发生漏标？" class="headerlink" title="什么情况下会发生漏标？"></a>什么情况下会发生漏标？</h3><p>在CMS和G1中我们使用黑白灰三种颜色标识扫描的对象：</p>
+<ul>
+<li><p>白：对象没有被标记到，标记阶段结束后，会被当做垃圾回收掉。</p>
+</li>
+<li><p>灰：对象被标记了，但是它的field还没有被标记或标记完。</p>
+</li>
+<li><p>黑：对象被标记了，且它的所有field也被标记完了。</p>
+</li>
+</ul>
+<p>而要发生漏标，下面两个条件必须同时满足：</p>
+<p>1、应用程序插入了一个从黑色对象到该白色对象的新引用</p>
+<p>2、应用程序删除了所有从灰色对象到该白色对象的直接或者间接引用。</p>
+<p>插入一个黑色到白色对象的新引用意味着一个原本要当做垃圾被回收的白对象有了新引用，变成可达的了，而因为是黑对象产生的引用，黑对象不会再重新扫描计算所以该白对象会被漏掉，但是如果该白对象还被灰对象引用的话那还可以抢救一下，因为灰对象还没有标记完，接下来还会从灰对象扫描到白对象。</p>
+<h3 id="使用dirty-card解决漏标问题"><a href="#使用dirty-card解决漏标问题" class="headerlink" title="使用dirty card解决漏标问题"></a>使用dirty card解决漏标问题</h3><p> JVM将内存分成一个个固定大小的<code>card</code>，然后有一个专门的数据结构(即这里的<code>Card Table</code>)维护每个<code>Card</code>的状态，一个字节对应一个<code>Card</code>。当一个<code>Card</code>上的对象的引用发生变化的时候，就将这个<code>Card</code>对应的<code>Card Table</code>上的状态置为dirty(实际上使用的是mod-union table)。之后在预清理和remark阶段会处理这些dirty card</p>
+<h5 id="CMS和G1标记dirty-card区别是什么？"><a href="#CMS和G1标记dirty-card区别是什么？" class="headerlink" title="CMS和G1标记dirty card区别是什么？"></a>CMS和G1标记dirty card区别是什么？</h5><ul>
+<li>CMS使用的是<strong>incremental update</strong> write barrier，也叫做insertion barrier,关注的是新引用关系的插入</li>
+<li>G1使用的是<strong>SATB</strong> write barrier（Snapshot-At-The-Beginning）也叫做deletion barrier 关注的是旧引用关系的删除</li>
+</ul>
+<blockquote>
+<p>Incremental update的做法是：只要在write barrier里发现要有一个白对象的引用被赋值到一个黑对象的字段里，那就把这个白对象变成灰色的（例如说标记并压到marking stack上，或者是记录在类似mod-union table里）。这样就强力杜绝了上述第一种情况的发生。 </p>
+<p>SATB的做法是：把marking开始时的逻辑快照里所有的活对象都看作时活的。具体做法是在write barrier里把所有旧的引用所指向的对象都变成非白的（已经黑灰就不用管，还是白的就变成灰的）。<br>这样做的实际效果是：如果一个灰对象的字段原本指向一个白对象，但在concurrent marker能扫描到这个字段之前，这个字段被赋上了别的值（例如说null），那么这个字段跟白对象之间的关联就被切断了。SATB write barrier保证在这种切断发生之前就把字段原本引用的对象变灰，从而杜绝了上述第二种情况的发生。 </p>
+</blockquote>
+<h3 id="CMS和G1的浮动垃圾-Floating-Garbage）"><a href="#CMS和G1的浮动垃圾-Floating-Garbage）" class="headerlink" title="CMS和G1的浮动垃圾(Floating Garbage）"></a>CMS和G1的浮动垃圾(Floating Garbage）</h3><p>CMS只关注新引用关系的插入，不关心删除。所以当一个黑色对象的引用被删除时CMS感知不到，还会把他当初一个已标记对象，导致一个垃圾对象不会在本轮删除。</p>
+<p>而G1只关注删除，会把inital marking 之后所有new出来的对象都当做黑对象来处理（原有对象单纯新增引用不会产生浮动垃圾）,而这些对象在concurrent marking时是否会变成垃圾G1是不关心的。所以G1一次GC中产生的浮动垃圾可能比CMS要多。</p>
+<h3 id="CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）"><a href="#CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）" class="headerlink" title="CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）"></a>CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）</h3><p>有一点要清楚就是预清理和可中断预清理这两个阶段并不是必须的，可以通过参数XX:-CMSPrecleaningEnabled关闭。而AbortablePreclean循环执行的前提是Eden区的内存使用量大于CMSScheduleRemarkEdenSizeThreshold(默认2M）如果新生代的对象太少，就没有必要执行该阶段，直接执行重新标记阶段。预清理阶段主要做两个事1：扫描young gen处理动态产生的新的对old gen的引用 2：处理之前标记的dirty card。而可中断预清理和预清理一样只不过是循环执行的，并具备以下几个中断条件:</p>
+<ul>
+<li><p>循环次数超过最多循环的次数 CMSMaxAbortablePrecleanLoops，默认是0，表示没有循环次数的限制。</p>
+</li>
+<li><p>执行循环的时间达到了阈值 CMSMaxAbortablePrecleanTime，默认是5s。</p>
+</li>
+<li><p>新生代Eden区的内存使用率达到了阈值CMSScheduleRemarkEdenPenetration(默认50%)</p>
+</li>
+</ul>
+<p>预清理阶段是并行执行的，目的就是为了减轻remark阶段的压力。循环预清理在5秒内期待一次Young GC，这样在remark阶段就会大幅减少扫描young gen带来的损耗。不过我们也可以通过CMSScavengeBeforeRemark参数指定在AbortablePreclean前执行一次GC。</p>
+<p>美团点评有一篇关于CMS优化的文章说使用这个参数使AbortablePreclean提前退出循环，我感觉表述有问题，应该是通过开启这个参数使得Eden区使用量小于CMSScheduleRemarkEdenSizeThreshold导致跳过AbortablePreclean阶段。</p>
+<h3 id="G1的CSet和RSet"><a href="#G1的CSet和RSet" class="headerlink" title="G1的CSet和RSet"></a>G1的CSet和RSet</h3><h5 id="Collection-Set（CSet）"><a href="#Collection-Set（CSet）" class="headerlink" title="Collection Set（CSet）"></a>Collection Set（CSet）</h5><p>CSet记录了某次GC要收集的Region集合，集合里的Region可以是任意年代的。GC中指向CSet外的引用都是可以忽略的，每次GC只关心本次CSet中的region</p>
+<h5 id="remembered-set"><a href="#remembered-set" class="headerlink" title="remembered set"></a>remembered set</h5><p>逻辑上说每个Region都有一个RSet，RSet记录了其他Region中的对象引用本Region中对象的关系，属于points-into结构（谁引用了我的对象）Rset是基于card table实现的。比如一个A对象引用了B对象，即A.filed=B。那么B的RSet中就会记录<strong>A对象所在的Card</strong>的地址。</p>
+<blockquote>
+<p>图片摘自美团技术博客<a href="https://tech.meituan.com/2016/09/23/g1.html" target="_blank" rel="noopener">https://tech.meituan.com/2016/09/23/g1.html</a></p>
+</blockquote>
+<p><img src="https://gitee.com/neusnail/img/raw/master/blogimg/RsetAndCardTable.jpg" alt="RsetAndCardTable"></p>
+<h3 id="G1的inital-marking阶段和Young-gc共用了什么？"><a href="#G1的inital-marking阶段和Young-gc共用了什么？" class="headerlink" title="G1的inital marking阶段和Young gc共用了什么？"></a>G1的inital marking阶段和Young gc共用了什么？</h3><p>一次global concurrent marking的inital marking是和young gc共用了暂停阶段，实际上共用了young gc scan出来的根集合。一个young gc可以顺带做inital marking 也可以不带。</p>
+<h3 id="为什么G1不关心Young-gen的对象引用关系的更新？"><a href="#为什么G1不关心Young-gen的对象引用关系的更新？" class="headerlink" title="为什么G1不关心Young gen的对象引用关系的更新？"></a>为什么G1不关心Young gen的对象引用关系的更新？</h3><p>分代式G1模式下有两种选定CSet的子模式，分别对应young GC与mixed GC： </p>
+<ul>
+<li><p>Young GC：选定所有young gen里的region。通过控制young gen的region个数来控制young GC的开销。 </p>
+</li>
+<li><p>Mixed GC：选定所有young gen里的region，外加根据global concurrent marking统计得出收集收益高的若干old gen region。在用户指定的开销目标范围内尽可能选择收益高的old gen region。</p>
+</li>
+</ul>
+<p>  可以看到<strong>young gen region总是在CSet内</strong>。而G1 gc时关心的是Cset外对Cset内的引用因此分代式G1不维护从young gen region出发的引用涉及的RSet更新。而CMS是只回收old gen的所以CMS的“CSet”是old gen当然要关心young gen的引用变更</p>
+<h3 id="G1的Evacuation过程"><a href="#G1的Evacuation过程" class="headerlink" title="G1的Evacuation过程"></a>G1的Evacuation过程</h3><p>evacuation过程就是清理过程，该过程和global concurrent marking是两个相对独立的过程.Evacuation阶段是全暂停的。它负责把一部分region里的活对象拷贝到空region里去，然后回收原本的region的空间。 evacuation过程可以选择任意多个Cset来进行回收，因为每个region都有对应的Rset ，通过Rset就可以判断那些对象是存活的。</p>
+<h3 id="G1对比CMS的优势在哪？"><a href="#G1对比CMS的优势在哪？" class="headerlink" title="G1对比CMS的优势在哪？"></a>G1对比CMS的优势在哪？</h3><ul>
+<li>G1虽然会mark整个堆，但并不evacuate所有有活对象的region；通过只选择收益高的少量region来evacuate，这种暂停的开销就可以（在一定范围内）可控。但是毕竟要暂停来拷贝对象，这个暂停时间再怎么低也有限。G1的evacuation pause在几十到一百甚至两百毫秒都很正常。所以切记不要把 -XX:MaxGCPauseMillis 设得太低，不然G1跟不上目标就容易导致垃圾堆积，反而更容易引发full GC而降低性能。通常设到100ms、250ms之类的都可能是合理的。</li>
+<li>而CMS的remark需要重新扫描mod-union table里的dirty card外加整个根集合，而此时整个young gen（不管对象死活）都会被当作根集合的一部分，因而CMS remark有可能会非常慢。如果在CMS的并发标记阶段，mutator仍然在高速分配内存使得young gen里有很多对象的话，那remark阶段就可能会有很长时间的暂停。Young gen越大，CMS remark暂停时间就有可能越长。而G1的finial marking(或者成为remarking)阶段只需要扫描SATB buffer</li>
+<li>CMS使用清除的方式回收，会使内存碎片化。而G1d的evacuation阶段是使用复制算法，不会有碎片</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+            <a href="/tags/gc/" rel="tag"># gc</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/15/jvm逃逸分析/" rel="next" title="jvm逃逸分析">
+                <i class="fa fa-chevron-left"></i> jvm逃逸分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/21/ReentrantLock代码分析/" rel="prev" title="ReentrantLock代码分析">
+                ReentrantLock代码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="neuSnail">
+            
+              <p class="site-author-name" itemprop="name">neuSnail</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#CMS初始标记（initial-marking）阶段的gc-root到底都有什么？"><span class="nav-number">1.</span> <span class="nav-text">CMS初始标记（initial marking）阶段的gc root到底都有什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1-region图示"><span class="nav-number">2.</span> <span class="nav-text">G1 region图示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么情况下会发生漏标？"><span class="nav-number">3.</span> <span class="nav-text">什么情况下会发生漏标？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用dirty-card解决漏标问题"><span class="nav-number">4.</span> <span class="nav-text">使用dirty card解决漏标问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CMS和G1标记dirty-card区别是什么？"><span class="nav-number">4.0.1.</span> <span class="nav-text">CMS和G1标记dirty card区别是什么？</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#CMS和G1的浮动垃圾-Floating-Garbage）"><span class="nav-number">5.</span> <span class="nav-text">CMS和G1的浮动垃圾(Floating Garbage）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）"><span class="nav-number">6.</span> <span class="nav-text">CMS的Precleaning（预清理）和AbortablePreclean（可中断的预清理）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1的CSet和RSet"><span class="nav-number">7.</span> <span class="nav-text">G1的CSet和RSet</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Collection-Set（CSet）"><span class="nav-number">7.0.1.</span> <span class="nav-text">Collection Set（CSet）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#remembered-set"><span class="nav-number">7.0.2.</span> <span class="nav-text">remembered set</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1的inital-marking阶段和Young-gc共用了什么？"><span class="nav-number">8.</span> <span class="nav-text">G1的inital marking阶段和Young gc共用了什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么G1不关心Young-gen的对象引用关系的更新？"><span class="nav-number">9.</span> <span class="nav-text">为什么G1不关心Young gen的对象引用关系的更新？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1的Evacuation过程"><span class="nav-number">10.</span> <span class="nav-text">G1的Evacuation过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1对比CMS的优势在哪？"><span class="nav-number">11.</span> <span class="nav-text">G1对比CMS的优势在哪？</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">neuSnail</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
